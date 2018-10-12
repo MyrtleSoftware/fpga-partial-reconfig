@@ -239,43 +239,6 @@ static int do_basic_math_persona(uint32_t number_of_runs, uint32_t verbose, int 
 	printf("BasicArithmetic persona PASS\n");
 	return 0;
 }
-#define DSP_INPUT_SIZE 27
-static int do_basic_dsp_persona(uint32_t number_of_runs, uint32_t verbose, int fd)
-{
-	uint32_t data;
-	uint64_t result = 0;
-	uint32_t i = 0;
-	uint32_t arg_a = 0;
-	uint32_t arg_b = 0;
-
-	printf("\tThis is the Multiplication Persona\n\n");
-	reset_pr_logic(verbose, fd);
-
-	for( i = 1; i <= number_of_runs; i++)
-	{
-		printf("Beginning test %d of %d\n", i, number_of_runs);
-		reset_pr_logic(verbose, fd);
-		generate_random_number(&arg_a, &arg_b, DSP_INPUT_SIZE);
-		VERBOSE_MESSAGE(verbose,"\tWrite to PR_OPERAND value: 0x%08X\n", arg_a);
-		write_pr(fd, PR_OPERAND, arg_a);
-		VERBOSE_MESSAGE(verbose,"\tWrite to PR_OPERAND value: 0x%08X\n", arg_b);
-		write_pr(fd, PR_INCR, arg_b);
-		data = 0x0;
-		data = read_pr(fd, PR_HOST_REGISTER_1);
-		result = data;
-		result = (result << 32);
-		data = read_pr(fd, PR_HOST_REGISTER_0);
-		result += data;
-		VERBOSE_MESSAGE(verbose,"\tPerformed:\t0x%08X * 0x%08X \n\tResult Read:\t0x%08jX\n\tExpected:\t0x%08jX\n", arg_a, arg_b, result, (uint64_t)((uint64_t)arg_a * (uint64_t)arg_b));
-		if(check_result_64((uint64_t)((uint64_t)arg_a * (uint64_t)arg_b), result))
-			exit(EXIT_FAILURE);
-
-		printf("Test %d of %d PASS\n", i, number_of_runs);
-
-	}
-	printf("Multiplication persona PASS\n");
-	return 0;
-}
 
 #define DDR4_MEM_ADDRESS HOST_PR_REGISTER_0
 #define DDR4_SEED_ADDRESS HOST_PR_REGISTER_1
@@ -451,10 +414,6 @@ int main(int argc, char **argv)
 	switch (persona_id) {
 	case 0x000000D2:
 		ret = do_basic_math_persona(number_of_runs, verbose, fd);
-		break;
-
-	case 0x0000AEED:
-		ret = do_basic_dsp_persona(number_of_runs, verbose, fd);
 		break;
 
 	case 0x000000EF:

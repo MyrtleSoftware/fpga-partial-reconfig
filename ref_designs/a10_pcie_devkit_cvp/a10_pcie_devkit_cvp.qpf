@@ -28,6 +28,5 @@ DATE = "16:30:53  October 01, 2018"
 # Revisions
 
 PROJECT_REVISION = "a10_pcie_devkit_cvp_ddr4_access"
-PROJECT_REVISION = "a10_pcie_devkit_cvp_basic_dsp"
 PROJECT_REVISION = "a10_pcie_devkit_cvp_basic_arithmetic"
 PROJECT_REVISION = "a10_pcie_devkit_cvp"

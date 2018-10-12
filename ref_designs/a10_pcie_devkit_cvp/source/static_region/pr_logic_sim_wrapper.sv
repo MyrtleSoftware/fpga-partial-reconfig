@@ -70,8 +70,7 @@ module pr_logic_wrapper
 
 localparam ENABLE_PERSONA_0 = 1;
 localparam ENABLE_PERSONA_1 = 1;
-localparam ENABLE_PERSONA_2 = 1;
-localparam NUM_PERSONA = 3;
+localparam NUM_PERSONA = 2;
 
 logic                pr_activate;
 int                  persona_select;
@@ -176,54 +175,6 @@ generate if (ENABLE_PERSONA_1) begin
 `endif
 
    ddr4_access_persona_top u_persona_1
-      (
-      .pr_region_clk(pr_region_clk),
-      .pr_logic_rst(pr_logic_rst),
-      .pr_handshake_start_req(pr_handshake_start_req_mux [persona_id]),
-      .pr_handshake_start_ack(pr_handshake_start_ack_mux [persona_id]),
-      .pr_handshake_stop_req(pr_handshake_stop_req_mux [persona_id]),
-      .pr_handshake_stop_ack(pr_handshake_stop_ack_mux [persona_id]),
-      .freeze_pr_region_avmm(freeze_pr_region_avmm_mux [persona_id]),
-      .tck(tck),
-      .tms(tms),
-      .tdi(tdi),
-      .vir_tdi(vir_tdi),
-      .ena(ena),
-      .tdo(tdo),
-      // DDR4 interface
-      .emif_usr_clk(emif_usr_clk),
-      .emif_usr_rst_n(emif_usr_rst_n),
-      .emif_avmm_waitrequest(emif_avmm_waitrequest_mux [persona_id]),
-      .emif_avmm_readdata(emif_avmm_readdata_mux [persona_id]),
-      .emif_avmm_readdatavalid(emif_avmm_readdatavalid_mux [persona_id]),
-      .emif_avmm_burstcount(emif_avmm_burstcount_mux [persona_id]),
-      .emif_avmm_writedata(emif_avmm_writedata_mux [persona_id]),
-      .emif_avmm_address(emif_avmm_address_mux [persona_id]),
-      .emif_avmm_write(emif_avmm_write_mux [persona_id]),
-      .emif_avmm_read(emif_avmm_read_mux [persona_id]),
-      .emif_avmm_byteenable(emif_avmm_byteenable_mux [persona_id]),
-      // AVMM interface
-      .pr_region_avmm_waitrequest(pr_region_avmm_waitrequest_mux [persona_id]),
-      .pr_region_avmm_readdata(pr_region_avmm_readdata_mux [persona_id]),
-      .pr_region_avmm_readdatavalid(pr_region_avmm_readdatavalid_mux [persona_id]),
-      .pr_region_avmm_burstcount(pr_region_avmm_burstcount_mux [persona_id]),
-      .pr_region_avmm_writedata(pr_region_avmm_writedata_mux [persona_id]),
-      .pr_region_avmm_address(pr_region_avmm_address_mux [persona_id]),
-      .pr_region_avmm_write(pr_region_avmm_write_mux [persona_id]),
-      .pr_region_avmm_read(pr_region_avmm_read_mux [persona_id]),
-      .pr_region_avmm_byteenable(pr_region_avmm_byteenable_mux [persona_id])
-      );
-end
-endgenerate
-
-generate if (ENABLE_PERSONA_2) begin
-   localparam persona_id = 2;
-
-`ifdef ALTERA_ENABLE_PR_MODEL
-   assign u_persona_2.altera_sim_pr_activate = pr_activate;
-`endif
-
-   basic_dsp_persona_top u_persona_2
       (
       .pr_region_clk(pr_region_clk),
       .pr_logic_rst(pr_logic_rst),
