@@ -188,7 +188,7 @@
         <ipxact:parameter parameterId="bonusData" type="string">
           <ipxact:name>bonusData</ipxact:name>
           <ipxact:displayName>bonusData</ipxact:displayName>
-          <ipxact:value>bonusData &#xa;{&#xa;   element $system&#xa;   {&#xa;      datum _originalDeviceFamily&#xa;      {&#xa;         value = "Arria 10";&#xa;         type = "String";&#xa;      }&#xa;   }&#xa;   element emif_clock&#xa;   {&#xa;      datum _originalVersion&#xa;      {&#xa;         value = "17.1";&#xa;         type = "String";&#xa;      }&#xa;   }&#xa;}&#xa;</ipxact:value>
+          <ipxact:value>bonusData &#xa;{&#xa;   element $system&#xa;   {&#xa;      datum _originalDeviceFamily&#xa;      {&#xa;         value = "Arria 10";&#xa;         type = "String";&#xa;      }&#xa;   }&#xa;   element emif_clock&#xa;   {&#xa;   }&#xa;}&#xa;</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="hideFromIPCatalog" type="bit">
           <ipxact:name>hideFromIPCatalog</ipxact:name>

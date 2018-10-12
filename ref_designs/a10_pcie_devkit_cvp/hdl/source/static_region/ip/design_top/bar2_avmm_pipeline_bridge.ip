@@ -1123,7 +1123,7 @@
         <ipxact:parameter parameterId="bonusData" type="string">
           <ipxact:name>bonusData</ipxact:name>
           <ipxact:displayName>bonusData</ipxact:displayName>
-          <ipxact:value>bonusData &#xa;{&#xa;   element $system&#xa;   {&#xa;      datum _originalDeviceFamily&#xa;      {&#xa;         value = "Arria 10";&#xa;         type = "String";&#xa;      }&#xa;   }&#xa;   element bar2_avmm_pipeline_bridge&#xa;   {&#xa;      datum _originalVersion&#xa;      {&#xa;         value = "17.1";&#xa;         type = "String";&#xa;      }&#xa;      datum _sortIndex&#xa;      {&#xa;         value = "0";&#xa;         type = "int";&#xa;      }&#xa;   }&#xa;}&#xa;</ipxact:value>
+          <ipxact:value>bonusData &#xa;{&#xa;   element $system&#xa;   {&#xa;      datum _originalDeviceFamily&#xa;      {&#xa;         value = "Arria 10";&#xa;         type = "String";&#xa;      }&#xa;   }&#xa;   element bar2_avmm_pipeline_bridge&#xa;   {&#xa;      datum _sortIndex&#xa;      {&#xa;         value = "0";&#xa;         type = "int";&#xa;      }&#xa;   }&#xa;}&#xa;</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="hideFromIPCatalog" type="bit">
           <ipxact:name>hideFromIPCatalog</ipxact:name>
