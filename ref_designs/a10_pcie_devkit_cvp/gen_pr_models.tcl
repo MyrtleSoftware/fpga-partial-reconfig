@@ -22,12 +22,10 @@
 load_package flow
 
 set rev_names [list \
-    a10_pcie_devkit_cvp_basic_arithmetic \
     a10_pcie_devkit_cvp_ddr4_access \
 ]
 t
 set module_names [list \
-    basic_arithmetic_persona_top \
     ddr4_access_persona_top \
 ]
 

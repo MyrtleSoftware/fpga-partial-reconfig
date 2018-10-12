@@ -165,81 +165,6 @@ static void reset_pr_logic(uint32_t verbose, int fd)
 
 }
 
-#define PR_OPERAND HOST_PR_REGISTER_0
-#define PR_INCR HOST_PR_REGISTER_1
-#define PR_RESULT PR_HOST_REGISTER_0
-static void generate_random_number (uint32_t *a, uint32_t *b, uint32_t bit_max)
-{
-	uint32_t rand_ready = 0;
-
-	while(!rand_ready){
-		*a = rand();
-		*b = rand();
-		if(bit_max == 32)
-			rand_ready = 1;
-		if((*a < (uint32_t)((1 << bit_max)-1)) && (uint32_t)(*b < ((1 << bit_max)-1)))
-			rand_ready = 1;
-	}
-
-	return;
-}
-
-int check_result_32(uint32_t expected_value, uint32_t returned_value)
-{
-	if (expected_value != returned_value ){
-			printf("Read back of Result value failed: \n");
-			printf("\tExpected:(0x%08X)\n",(int) expected_value);
-			printf("\tReceived: (0x%08X)\n", (int) returned_value);
-			return 1;
-		}
-
-	return 0;
-}
-int check_result_64(uint64_t expected_value, uint64_t returned_value)
-{
-	if (expected_value != returned_value ){
-			printf("Read back of Result value failed: \n");
-			printf("\tExpected:(0x%08jX)\n", expected_value);
-			printf("\tReceived: (0x%08jX)\n", returned_value);
-			return 1;
-		}
-
-	return 0;
-}
-
-#define ADDER_INPUT_SIZE 32
-static int do_basic_math_persona(uint32_t number_of_runs, uint32_t verbose, int fd)
-{
-	uint32_t data;
-	uint32_t i;
-	uint32_t operand = 0;
-	uint32_t increment = 0;
-
-	printf("\tThis is BasicArithmetic Persona\n\n");
-	reset_pr_logic(verbose, fd);
-
-	for( i = 1; i <= number_of_runs; i++) {
-
-		printf("Beginning test %d of %d\n", i, number_of_runs);
-		reset_pr_logic(verbose, fd);
-		generate_random_number(&operand, &increment, ADDER_INPUT_SIZE);
-		VERBOSE_MESSAGE(verbose,"\tWrite to PR_OPERAND value: 0x%08X\n", operand);
-		write_pr(fd, PR_OPERAND, operand);
-		VERBOSE_MESSAGE(verbose,"\tWrite to PR_OPERAND value: 0x%08X\n", increment);
-		write_pr(fd, PR_INCR, increment);
-		data = 0x0;
-		data = read_pr(fd, PR_RESULT);
-		VERBOSE_MESSAGE(verbose,"\tPerformed:\t0x%08X + 0x%08X\n\tResult Read:\t0x%08X\n\tExpected\t0x%08X\n", operand, increment, data, (uint32_t) (operand + increment));
-		if(check_result_32(operand + increment, data))
-			exit(EXIT_FAILURE);
-
-		printf("Test %d of %d PASS\n", i, number_of_runs);
-	}
-
-	printf("BasicArithmetic persona PASS\n");
-	return 0;
-}
-
 #define DDR4_MEM_ADDRESS HOST_PR_REGISTER_0
 #define DDR4_SEED_ADDRESS HOST_PR_REGISTER_1
 #define DDR4_FINAL_OFFSET HOST_PR_REGISTER_2
@@ -410,11 +335,6 @@ int main(int argc, char **argv)
 		printf("read failed\n");
 	else
 		printf("Persona ID: 0x%08X\n", persona_id);
-
-	switch (persona_id) {
-	case 0x000000D2:
-		ret = do_basic_math_persona(number_of_runs, verbose, fd);
-		break;
 
 	case 0x000000EF:
 		ret = do_ddr4_access_persona(seed, number_of_runs, verbose, fd);
