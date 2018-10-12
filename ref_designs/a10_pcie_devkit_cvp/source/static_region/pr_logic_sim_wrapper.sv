@@ -1,5 +1,5 @@
 // Copyright (c) 2001-2018 Intel Corporation
-//  
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -7,10 +7,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//  
+//
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
-//  
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -27,8 +27,8 @@
 
 module pr_logic_wrapper
 (
-   input wire           pr_region_clk , 
-   input wire           pr_logic_rst , 
+   input wire           pr_region_clk ,
+   input wire           pr_logic_rst ,
 
    // Signaltap Interface
    input wire           tck ,
@@ -40,15 +40,15 @@ module pr_logic_wrapper
    // DDR4 interface
    input wire           emif_usr_clk ,
    input wire           emif_usr_rst_n ,
-   input wire           emif_avmm_waitrequest , 
-   input wire [511:0]   emif_avmm_readdata , 
-   input wire           emif_avmm_readdatavalid , 
-   output reg [6:0]     emif_avmm_burstcount , 
-   output reg [511:0]   emif_avmm_writedata , 
-   output reg [24:0]    emif_avmm_address , 
-   output reg           emif_avmm_write , 
-   output reg           emif_avmm_read , 
-   output reg [63:0]    emif_avmm_byteenable , 
+   input wire           emif_avmm_waitrequest ,
+   input wire [511:0]   emif_avmm_readdata ,
+   input wire           emif_avmm_readdatavalid ,
+   output reg [6:0]     emif_avmm_burstcount ,
+   output reg [511:0]   emif_avmm_writedata ,
+   output reg [24:0]    emif_avmm_address ,
+   output reg           emif_avmm_write ,
+   output reg           emif_avmm_read ,
+   output reg [63:0]    emif_avmm_byteenable ,
 
    input wire           pr_handshake_start_req ,
    output reg           pr_handshake_start_ack ,
@@ -57,22 +57,21 @@ module pr_logic_wrapper
    output wire          freeze_pr_region_avmm ,
 
    // AVMM interface
-   output reg           pr_region_avmm_waitrequest , 
-   output reg [31:0]    pr_region_avmm_readdata , 
-   output reg           pr_region_avmm_readdatavalid, 
-   input wire [0:0]     pr_region_avmm_burstcount , 
-   input wire [31:0]    pr_region_avmm_writedata , 
-   input wire [15:0]    pr_region_avmm_address , 
-   input wire           pr_region_avmm_write , 
-   input wire           pr_region_avmm_read , 
+   output reg           pr_region_avmm_waitrequest ,
+   output reg [31:0]    pr_region_avmm_readdata ,
+   output reg           pr_region_avmm_readdatavalid,
+   input wire [0:0]     pr_region_avmm_burstcount ,
+   input wire [31:0]    pr_region_avmm_writedata ,
+   input wire [15:0]    pr_region_avmm_address ,
+   input wire           pr_region_avmm_write ,
+   input wire           pr_region_avmm_read ,
    input wire [3:0]     pr_region_avmm_byteenable
 );
 
 localparam ENABLE_PERSONA_0 = 1;
 localparam ENABLE_PERSONA_1 = 1;
 localparam ENABLE_PERSONA_2 = 1;
-localparam ENABLE_PERSONA_3 = 1;
-localparam NUM_PERSONA = 4;
+localparam NUM_PERSONA = 3;
 
 logic                pr_activate;
 int                  persona_select;
@@ -225,54 +224,6 @@ generate if (ENABLE_PERSONA_2) begin
 `endif
 
    basic_dsp_persona_top u_persona_2
-      (
-      .pr_region_clk(pr_region_clk),
-      .pr_logic_rst(pr_logic_rst),
-      .pr_handshake_start_req(pr_handshake_start_req_mux [persona_id]),
-      .pr_handshake_start_ack(pr_handshake_start_ack_mux [persona_id]),
-      .pr_handshake_stop_req(pr_handshake_stop_req_mux [persona_id]),
-      .pr_handshake_stop_ack(pr_handshake_stop_ack_mux [persona_id]),
-      .freeze_pr_region_avmm(freeze_pr_region_avmm_mux [persona_id]),
-      .tck(tck),
-      .tms(tms),
-      .tdi(tdi),
-      .vir_tdi(vir_tdi),
-      .ena(ena),
-      .tdo(tdo),
-      // DDR4 interface
-      .emif_usr_clk(emif_usr_clk),
-      .emif_usr_rst_n(emif_usr_rst_n),
-      .emif_avmm_waitrequest(emif_avmm_waitrequest_mux [persona_id]),
-      .emif_avmm_readdata(emif_avmm_readdata_mux [persona_id]),
-      .emif_avmm_readdatavalid(emif_avmm_readdatavalid_mux [persona_id]),
-      .emif_avmm_burstcount(emif_avmm_burstcount_mux [persona_id]),
-      .emif_avmm_writedata(emif_avmm_writedata_mux [persona_id]),
-      .emif_avmm_address(emif_avmm_address_mux [persona_id]),
-      .emif_avmm_write(emif_avmm_write_mux [persona_id]),
-      .emif_avmm_read(emif_avmm_read_mux [persona_id]),
-      .emif_avmm_byteenable(emif_avmm_byteenable_mux [persona_id]),
-      // AVMM interface
-      .pr_region_avmm_waitrequest(pr_region_avmm_waitrequest_mux [persona_id]),
-      .pr_region_avmm_readdata(pr_region_avmm_readdata_mux [persona_id]),
-      .pr_region_avmm_readdatavalid(pr_region_avmm_readdatavalid_mux [persona_id]),
-      .pr_region_avmm_burstcount(pr_region_avmm_burstcount_mux [persona_id]),
-      .pr_region_avmm_writedata(pr_region_avmm_writedata_mux [persona_id]),
-      .pr_region_avmm_address(pr_region_avmm_address_mux [persona_id]),
-      .pr_region_avmm_write(pr_region_avmm_write_mux [persona_id]),
-      .pr_region_avmm_read(pr_region_avmm_read_mux [persona_id]),
-      .pr_region_avmm_byteenable(pr_region_avmm_byteenable_mux [persona_id])
-      );
-end
-endgenerate
-
-generate if (ENABLE_PERSONA_3) begin
-   localparam persona_id = 3;
-
-`ifdef ALTERA_ENABLE_PR_MODEL
-   assign u_persona_3.altera_sim_pr_activate = pr_activate;
-`endif
-
-   gol_persona_top u_persona_3
       (
       .pr_region_clk(pr_region_clk),
       .pr_logic_rst(pr_logic_rst),

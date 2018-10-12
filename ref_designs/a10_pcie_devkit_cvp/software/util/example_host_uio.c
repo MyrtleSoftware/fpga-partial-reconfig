@@ -1,5 +1,5 @@
 // Copyright (c) 2001-2018 Intel Corporation
-//  
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -7,10 +7,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//  
+//
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
-//  
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -20,7 +20,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Copyright (c) 2001-2018 Intel Corporation
-//  
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -28,10 +28,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//  
+//
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
-//  
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -41,7 +41,7 @@
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Copyright (c) 2001-2017 Intel Corporation
-//  
+//
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -49,10 +49,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//  
+//
 // The above copyright notice and this permission notice shall be included
 // in all copies or substantial portions of the Software.
-//  
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 // OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -94,7 +94,7 @@
 #define HOST_PR_REGISTER_5 0xf0
 #define HOST_PR_REGISTER_6 0x100
 #define HOST_PR_REGISTER_7 0x110
-#define VERBOSE_MESSAGE(verbosity,fmt,args...) do{ if(verbosity == 1)printf(fmt,##args); }while (0)	
+#define VERBOSE_MESSAGE(verbosity,fmt,args...) do{ if(verbosity == 1)printf(fmt,##args); }while (0)
 
 
 int read_pr(int fd, int offset) {
@@ -147,7 +147,7 @@ static void print_exe_time(struct timespec begin, struct timespec end )
 		printf("\texecution time: %0.3f us\n",exe_time_us);
 		return;
 	}
-	
+
 	printf("\texecution time: %jd ns\n",((end.tv_nsec - begin.tv_nsec)));
 	return;
 }
@@ -291,7 +291,7 @@ static int run_ddr4_address_sweep(uint32_t base_address, uint32_t final_offset, 
 {
 	uint32_t data = 0;
 	uint32_t busy = 0;
-	
+
 	data = base_address;
 	write_pr(fd, DDR4_MEM_ADDRESS, data);
 	data = final_offset;
@@ -299,7 +299,7 @@ static int run_ddr4_address_sweep(uint32_t base_address, uint32_t final_offset, 
 	data = 0 | (1 << DDR4_START_MASK) | (calibration << DDR4_CAL_MASK);
 	write_pr(fd, PR_CONTROL_REGISTER, data);
 	data = 0 | (0 << DDR4_START_MASK) | (calibration << DDR4_CAL_MASK);
-	write_pr(fd, PR_CONTROL_REGISTER, data);	
+	write_pr(fd, PR_CONTROL_REGISTER, data);
 
 	do {
 		data = 0;
@@ -307,7 +307,7 @@ static int run_ddr4_address_sweep(uint32_t base_address, uint32_t final_offset, 
 		busy = data;
 	} while(busy);
 
-	return 0;	
+	return 0;
 }
 static int do_ddr4_access_persona (uint32_t seed, uint32_t number_of_runs, uint32_t verbose, int fd)
 {
@@ -373,194 +373,12 @@ static int do_ddr4_access_persona (uint32_t seed, uint32_t number_of_runs, uint3
 		}
 		printf("Test %d of %d PASS\n", i, number_of_runs);
 	}
-	
+
 	printf("DDR4 Access persona passed\n");
 	return 0;
 }
-#define GOL_COUNTER_LIMIT_ADDRESS HOST_PR_REGISTER_0
-#define GOL_TOP_HALF HOST_PR_REGISTER_1
-#define GOL_BOT_HALF HOST_PR_REGISTER_2
-#define GOL_BUSY_REG PR_HOST_REGISTER_0
-#define GOL_TOP_END PR_HOST_REGISTER_1
-#define GOL_BOT_END PR_HOST_REGISTER_2
-#define GOL_START_MASK 1
-#define GOL_ROWS 8
-#define GOL_COLS 8
-static uint32_t getbit(uint64_t value, uint32_t position) 
-{
-	
-	uint64_t temp = value;
 
-	temp = (temp >> position) & (1);
-	return temp;
-}
-static void print_board(uint64_t board)
-{
-	
-	int i = 0;
-	printf("\t================\n\t");
-	for(i=63 ; i >= 0; i--){
-		if((i!=0) && ((i%GOL_ROWS) == 0))
-			printf("%d\n\t",getbit(board,i));
-		 else 
-			printf("%d ",getbit(board,i));
-
-		
-	}
-	printf("\n\t================\n");
-
-	return;
-}
-
-static void run_gol_accelerated(uint32_t top_half, uint32_t bottom_half, uint32_t number_of_runs, uint32_t verbose, int fd)
-{
-
-	struct timespec begin;
-	struct timespec end;
-	uint32_t data = 0;
-	uint32_t busy = 0;
-	
-	printf("Loading GOL data over PCIe, starting timer\n");
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &begin);
-	write_pr(fd, GOL_TOP_HALF, top_half);
-	write_pr(fd, GOL_BOT_HALF, bottom_half);
-	write_pr(fd, GOL_COUNTER_LIMIT_ADDRESS, number_of_runs);
-	write_pr(fd, PR_CONTROL_REGISTER, (0 << GOL_START_MASK));
-	write_pr(fd, PR_CONTROL_REGISTER, (1 << GOL_START_MASK));
-	write_pr(fd, PR_CONTROL_REGISTER, (0 << GOL_START_MASK));
-	
-	do {
-		data = 0;
-		data = read_pr(fd, GOL_BUSY_REG);
-		busy = data;
-	} while(busy);
-	
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
-	printf("Accelerated GOL complete\n");
-	print_exe_time(begin,end);
-	return;
-
-}
-
-
-static void calculate_neighbors(uint64_t current_board, uint32_t *neighbors)
-{
-
-	int i = 0;
-	int j = 0;
-
-	for(i = 0; i < GOL_ROWS; i++){
-		for(j = 0; j < GOL_COLS; j++){
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] = 0;
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j+1) + GOL_ROWS) % GOL_ROWS) + ((((i-1) + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j)   + GOL_ROWS) % GOL_ROWS) + ((((i-1) + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j-1) + GOL_ROWS) % GOL_ROWS) + ((((i-1) + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j+1) + GOL_ROWS) % GOL_ROWS) + ((((i)   + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j-1) + GOL_ROWS) % GOL_ROWS) + ((((i)   + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j+1) + GOL_ROWS) % GOL_ROWS) + ((((i+1) + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j)   + GOL_ROWS) % GOL_ROWS) + ((((i+1) + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-			neighbors[((j + GOL_COLS) % GOL_COLS) + (((i + GOL_ROWS) % GOL_ROWS) * GOL_COLS)] += getbit(current_board, ((((j-1) + GOL_ROWS) % GOL_ROWS) + ((((i+1) + GOL_COLS) % GOL_COLS) * GOL_COLS)));
-		}
-	}
-
-}
-static uint64_t apply_gol_rules(uint64_t current_board, uint32_t *neighbors)
-{
-
-	uint32_t i = 0;
-	uint64_t return_board = 0;
-	for(i = 0; i < (GOL_ROWS * GOL_COLS); i++){
-		if (getbit(current_board,i) == 1){
-			if((neighbors[i] == 2) || ( (neighbors[i] == 3)))
-				return_board = (return_board) | (uint64_t)((uint64_t)1 << (uint64_t)i);
-		}
-		else{
-			if(neighbors[i] == 3)
-				return_board = (return_board) | (uint64_t)((uint64_t)1 << (uint64_t)i);
-		}
-		neighbors[i]=0;
-	}
-	return return_board;
-}
-static uint64_t run_gol_verify(uint64_t board, uint32_t number_of_runs, uint32_t verbose)
-{
-	uint32_t i = 0;
-	uint32_t j = 0;
-	uint64_t current_board = 0;
-	uint64_t next_board = 0;
-	uint32_t *neighbors;
-	struct timespec begin;
-	struct timespec end;
-	printf("Beginning host side GOL for verification, starting timer\n");
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &begin);
-	neighbors = (uint32_t*) calloc((GOL_ROWS * GOL_COLS),sizeof(uint32_t));
-
-	current_board = board;
-
-	for(i = 0;i < number_of_runs; i++){
-		for(j = 0; j < 64; j++){
-			if(neighbors[j] != 0)
-			{
-				exit(EXIT_FAILURE);
-			}
-		}
-		calculate_neighbors(current_board, neighbors);
-		next_board = apply_gol_rules(current_board, neighbors);
-		current_board = next_board;
-	}
-	free(neighbors);
-	clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &end);
-
-	printf("Host side GOL execution complete\n");
-	print_exe_time(begin,end);
-	return current_board;
-}
-
-static int do_gol_persona (uint32_t seed, uint32_t number_of_runs, uint32_t verbose, int fd)
-{
-	
-	uint32_t top_half=0;
-	uint32_t bottom_half=0;
-	uint32_t top_half_final=0;
-	uint32_t bottom_half_final=0;
-	uint64_t accelerated_result=0;
-	uint64_t host_generated_result=0;
-	printf("This is the Game of Life Persona\n");
-
-	reset_pr_logic(verbose, fd);
-	generate_random_number(&top_half, &bottom_half, 32);
-	VERBOSE_MESSAGE(verbose,"\tInitial GOL Board:\n");
-	VERBOSE_MESSAGE(verbose,"\t%08X %08X\n", top_half,bottom_half);
-	if(verbose == 1)
-		print_board(((uint64_t) ((uint64_t)top_half << 32)) | ((uint64_t) bottom_half));
-	run_gol_accelerated(top_half,bottom_half,number_of_runs,verbose, fd);
-	reset_pr_logic(verbose, fd);
-
-	top_half_final = 0;
-	bottom_half_final = 0;
-	top_half_final = read_pr(fd, GOL_TOP_END);
-	bottom_half_final = read_pr(fd, GOL_BOT_END);
-	VERBOSE_MESSAGE(verbose,"\t%08X %08X\n", top_half_final,bottom_half_final);
-
-	accelerated_result = ((uint64_t) ((uint64_t)(top_half_final) << 32)) | ((uint64_t) bottom_half_final);
-	if(verbose == 1)
-		print_board(((uint64_t) ((uint64_t)top_half_final << 32)) | ((uint64_t) bottom_half_final));
-	host_generated_result = run_gol_verify(((uint64_t) ((uint64_t)top_half << 32)) | ((uint64_t) bottom_half),number_of_runs,verbose);
-	if(verbose == 1)
-		print_board(host_generated_result);
-
-
-
-	VERBOSE_MESSAGE(verbose,"\t%08jX\n", host_generated_result);
-	if(check_result_64(host_generated_result,accelerated_result))
-		exit(EXIT_FAILURE);
-	printf("GOL persona passed\n");
-
-	return 0;
-
-}
-
-static void usage(const char *prog_name) 
+static void usage(const char *prog_name)
 {
 
 	printf("\nUsage:%s <opts> [val]\n\n",prog_name);
@@ -572,7 +390,7 @@ static void usage(const char *prog_name)
 	exit(0);
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
 	char *file_name = "/dev/fpga_pcie";
 	int ret;
@@ -641,9 +459,6 @@ int main(int argc, char **argv)
 
 	case 0x000000EF:
 		ret = do_ddr4_access_persona(seed, number_of_runs, verbose, fd);
-		break;
-	case 0x00676F6C:
-		ret = do_gol_persona(seed, number_of_runs, verbose, fd);
 		break;
 	default:
 		printf("unknown PR ID value 0x%x\n", persona_id);
